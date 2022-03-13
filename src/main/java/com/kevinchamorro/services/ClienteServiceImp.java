@@ -3,18 +3,23 @@ package com.kevinchamorro.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kevinchamorro.models.entities.ClienteEntity;
+import com.kevinchamorro.models.entities.ParametroEntity;
 import com.kevinchamorro.models.entities.PersonaEntity;
 import com.kevinchamorro.models.wrappers.ClienteWrap;
 import com.kevinchamorro.repositories.ClienteRepo;
+import com.kevinchamorro.repositories.ParametroRepo;
 import com.kevinchamorro.repositories.PersonaRepo;
+import com.kevinchamorro.repositories.specs.ParametroSpecs;
 import com.kevinchamorro.repositories.specs.PersonaSpecs;
+import com.kevinchamorro.util.enums.CodigoParametroEnum;
+import com.kevinchamorro.util.enums.GeneroEnum;
+import com.kevinchamorro.util.func.UtilFunc;
 
 @Service
 public class ClienteServiceImp implements IClienteService {
@@ -24,60 +29,44 @@ public class ClienteServiceImp implements IClienteService {
 	
 	@Autowired
 	private PersonaRepo personaRepo;
+	
+	@Autowired
+	private ParametroRepo parametroRepo;
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<ClienteWrap> getAll() {
+	public List<ClienteEntity> get() {
 		
-		List<ClienteEntity> clientes = (List<ClienteEntity>)clienteRepo.findAll();
-		return clientes.stream()
-				.map(m -> new ClienteWrap(
-						m.getPersona().getIdentificacion(),
-						m.getPersona().getNombre(),
-						m.getPersona().getGenero(),
-						m.getPersona().getFechaNacimiento().toString(),
-						m.getPersona().getTelefono(),
-						m.getPersona().getDireccion(),
-						null))
-				.collect(Collectors.toList());
+		return (List<ClienteEntity>)clienteRepo.findAll();
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public ClienteWrap getById(Long id) {
+	public ClienteEntity getById(Long id) {
 		
-		ClienteEntity cliente = clienteRepo.findById(id).get();
+		ClienteEntity cliente = clienteRepo.findById(id).orElse(null);
 		
-		ClienteWrap clienteWrap = new ClienteWrap(
-				cliente.getPersona().getIdentificacion(),
-				cliente.getPersona().getNombre(),
-				cliente.getPersona().getGenero(),
-				cliente.getPersona().getFechaNacimiento().toString(),
-				cliente.getPersona().getTelefono(),
-				cliente.getPersona().getDireccion(),
-				cliente.getClave());
-		
-		return clienteWrap;
+		return cliente;
 	}
 	
 	@Override
 	@Transactional()
-	public ClienteEntity create(ClienteWrap nuevoCliente) {
+	public ClienteEntity post(ClienteWrap clienteWrap) throws Exception {
 		
 		PersonaEntity persona = new PersonaEntity();
-		persona.setIdentificacion(nuevoCliente.identificacion);
-		persona.setNombre(nuevoCliente.nombres);
-		persona.setGenero(nuevoCliente.genero);
-		persona.setFechaNacimiento(LocalDate.parse(nuevoCliente.fechaNacimiento));
-		persona.setDireccion(nuevoCliente.direccion);
-		persona.setTelefono(nuevoCliente.telefono);
-		persona.setEstatus(true);
+		persona.setIdentificacion(clienteWrap.identificacion);
+		persona.setNombre(clienteWrap.nombres);
+		persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+		persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+		persona.setDireccion(clienteWrap.direccion);
+		persona.setTelefono(clienteWrap.telefono);
+		persona.setEstatus(clienteWrap.estatus);
 		persona.setFechaCreacion(LocalDateTime.now());
 		persona.setFechaActualizacion(LocalDateTime.now());
 		
 		ClienteEntity cliente = new ClienteEntity();
-		cliente.setCodigoCliente("CLI0001");
-		cliente.setClave(nuevoCliente.clave);
+		cliente.setCodigoCliente(generarCodigoCliente());
+		cliente.setClave(clienteWrap.clave);
 		cliente.setEstatus(true);
 		cliente.setFechaCreacion(LocalDateTime.now());
 		cliente.setFechaActualizacion(LocalDateTime.now());
@@ -92,20 +81,87 @@ public class ClienteServiceImp implements IClienteService {
 
 	@Override
 	@Transactional()
-	public ClienteEntity update(ClienteWrap clienteWra) {
+	public ClienteEntity put(Long id, ClienteWrap clienteWrap) throws Exception {
 		
-		PersonaEntity persona = personaRepo.findOne(PersonaSpecs.findByIdentificacion(clienteWra.identificacion)).orElse(null);
+		PersonaEntity persona = personaRepo.findOne(PersonaSpecs.findByIdentificacion(clienteWrap.identificacion)).orElse(null);
 		
-		persona.setDireccion(clienteWra.direccion);
+		if ( persona == null  ) {
+			
+			persona = new PersonaEntity();
+			persona.setIdentificacion(clienteWrap.identificacion);
+			persona.setFechaCreacion(LocalDateTime.now());
+			
+		}
+		
+		persona.setEstatus(clienteWrap.estatus);
+		persona.setDireccion(clienteWrap.direccion);
 		persona.setFechaActualizacion(LocalDateTime.now());
-		persona.setFechaNacimiento(LocalDate.parse(clienteWra.fechaNacimiento));
-		persona.setGenero(clienteWra.genero);
-		persona.setNombre(clienteWra.nombres);
-		persona.setTelefono(clienteWra.telefono);
+		persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+		persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+		persona.setNombre(clienteWrap.nombres);
+		persona.setTelefono(clienteWrap.telefono);
 		
 		ClienteEntity cliente = clienteRepo.findById(persona.getId()).get();
 		
-		cliente.setClave(clienteWra.clave);
+		if ( cliente == null ) {
+			
+			cliente = new ClienteEntity();
+			cliente.setCodigoCliente(generarCodigoCliente());
+			cliente.setFechaCreacion(LocalDateTime.now());
+			cliente.setPersona(persona);
+			
+		}
+		
+		persona.setEstatus(clienteWrap.estatus);
+		cliente.setClave(clienteWrap.clave);
+		cliente.setFechaActualizacion(LocalDateTime.now());
+		
+		personaRepo.save(persona);
+		clienteRepo.save(cliente);
+		
+		return cliente;
+	}
+	
+	@Override
+	@Transactional()
+	public ClienteEntity patch(Long id, ClienteWrap clienteWrap) throws Exception {
+		
+		PersonaEntity persona = personaRepo.findOne(PersonaSpecs.findByIdentificacion(clienteWrap.identificacion)).orElse(null);
+		
+		if (persona == null)
+			throw new Exception("Cliente no existe");
+		
+		if (clienteWrap.direccion != null)
+			persona.setDireccion(clienteWrap.direccion);
+
+		if (clienteWrap.fechaNacimiento != null)
+			persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+		
+		if (clienteWrap.genero != null)
+			persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+		
+		if (clienteWrap.nombres != null)
+			persona.setNombre(clienteWrap.nombres);
+		
+		if (clienteWrap.telefono != null)
+			persona.setTelefono(clienteWrap.telefono);
+		
+		if (clienteWrap.estatus != null)
+			persona.setEstatus(clienteWrap.estatus);
+		
+		persona.setFechaActualizacion(LocalDateTime.now());
+		
+		ClienteEntity cliente = clienteRepo.findById(persona.getId()).get();
+		
+		if (cliente == null)
+			throw new Exception("Cliente no existe");
+		
+		if (clienteWrap.clave != null)
+			cliente.setClave(clienteWrap.clave);
+		
+		if (clienteWrap.estatus != null)
+			cliente.setEstatus(clienteWrap.estatus);
+		
 		cliente.setFechaActualizacion(LocalDateTime.now());
 		
 		personaRepo.save(persona);
@@ -116,13 +172,36 @@ public class ClienteServiceImp implements IClienteService {
 
 	@Override
 	@Transactional()
-	public void delete(Long id) {
+	public void delete(Long id) throws Exception {
 		
 		ClienteEntity cliente = clienteRepo.findById(id).get();
+		
+		if (cliente == null)
+			throw new Exception("No existe cliente"); 
+		
 		PersonaEntity persona = personaRepo.findById(cliente.getPersona().getId()).get();
 		
 		clienteRepo.delete(cliente);
 		personaRepo.delete(persona);
+		
+	}
+	
+	private String generarCodigoCliente() throws Exception {
+		
+		ParametroEntity parametro = parametroRepo.findOne(ParametroSpecs.findByCodigo(CodigoParametroEnum.CODIGO_CLIENTE.name())).orElse(null);
+		
+		if ( parametro == null )
+			throw new Exception("No se puede generar codigo cliente ya que no existe el parametro");
+		
+		Integer valor = parametro.getValor();
+		
+		String codigoCliente = parametro.getPrefijo() + valor + parametro.getSufijo();
+		
+		parametro.setValor(valor + 1);
+		
+		parametroRepo.save(parametro);
+		
+		return codigoCliente;
 		
 	}
 

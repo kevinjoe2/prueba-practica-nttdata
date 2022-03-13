@@ -7,10 +7,14 @@ import java.time.Period;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.kevinchamorro.util.enums.GeneroEnum;
 
 @Entity
 @Table(name = "personas")
@@ -28,7 +32,8 @@ public class PersonaEntity implements Serializable {
 	String nombre;
 	
 	@Column(name = "genero", length = 1)
-	private String genero;
+	@Enumerated(EnumType.STRING)
+	private GeneroEnum genero;
 	
 	@Column(name = "fecha_nacimiento", columnDefinition = "DATE")
 	private LocalDate fechaNacimiento; // En lugar de edad, optamos por poner la fecha de nacimiento y a partir de ello carcular la Edad.
@@ -70,11 +75,11 @@ public class PersonaEntity implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public String getGenero() {
+	public GeneroEnum getGenero() {
 		return genero;
 	}
 
-	public void setGenero(String genero) {
+	public void setGenero(GeneroEnum genero) {
 		this.genero = genero;
 	}
 

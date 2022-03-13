@@ -5,12 +5,16 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.kevinchamorro.util.enums.TipoMovimientoEnum;
 
 @Entity
 @Table(name = "movimientos")
@@ -25,13 +29,17 @@ public class MovimientoEntity implements Serializable {
 	private LocalDateTime fechaTrasaccion;
 	
 	@Column(name = "tipo_movimiento", length = 1)
-	private String tipoMovimiento;
+	@Enumerated(EnumType.STRING)
+	private TipoMovimientoEnum tipoMovimiento;
 	
 	@Column(name = "valor", columnDefinition = "NUMERIC(15,2)")
 	private Double valor;
 	
-	@Column(name = "saldo", columnDefinition = "NUMERIC(15,2)")
-	private Double saldo;
+	@Column(name = "saldo_inicial", columnDefinition = "NUMERIC(15,2)")
+	private Double saldoInicial;
+	
+	@Column(name = "saldo_disponible", columnDefinition = "NUMERIC(15,2)")
+	private Double saldoDisponible;
 	
 	@Column(name = "estatus")
 	private Boolean estatus;
@@ -62,11 +70,11 @@ public class MovimientoEntity implements Serializable {
 		this.fechaTrasaccion = fechaTrasaccion;
 	}
 
-	public String getTipoMovimiento() {
+	public TipoMovimientoEnum getTipoMovimiento() {
 		return tipoMovimiento;
 	}
 
-	public void setTipoMovimiento(String tipoMovimiento) {
+	public void setTipoMovimiento(TipoMovimientoEnum tipoMovimiento) {
 		this.tipoMovimiento = tipoMovimiento;
 	}
 
@@ -78,12 +86,20 @@ public class MovimientoEntity implements Serializable {
 		this.valor = valor;
 	}
 
-	public Double getSaldo() {
-		return saldo;
+	public Double getSaldoInicial() {
+		return saldoInicial;
 	}
 
-	public void setSaldo(Double saldo) {
-		this.saldo = saldo;
+	public void setSaldoInicial(Double saldoInicial) {
+		this.saldoInicial = saldoInicial;
+	}
+	
+	public Double getSaldoDisponible() {
+		return saldoDisponible;
+	}
+
+	public void setSaldoDisponible(Double saldoDisponible) {
+		this.saldoDisponible = saldoDisponible;
 	}
 
 	public Boolean getEstatus() {

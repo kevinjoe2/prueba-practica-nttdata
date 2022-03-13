@@ -6,9 +6,9 @@ import com.kevinchamorro.models.entities.ClienteEntity;
 
 public class ClienteSpecs {
 	
-	public static Specification<ClienteEntity> findByIdPersona(Long idPersona) {
+	public static Specification<ClienteEntity> findByCodigoCliente(String codigoCliente) {
 		return (root, query, builder) -> {
-			return builder.equal(root.get("id_persona"), idPersona);
+			return builder.equal(root.get("codigo_cliente"), codigoCliente);
 		};
 	}
 

@@ -10,30 +10,34 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.kevinchamorro.util.enums.TipoCuentaEnum;
+import com.kevinchamorro.util.enums.CodigoParametroEnum;
 
 @Entity
-@Table(name = "cuentas")
-public class CuentaEntity implements Serializable {
+@Table(name = "parametros")
+public class ParametroEntity implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 	
-	@Column(name = "numero_cuenta", length = 8)
-	private String numeroCuenta;
-	
-	@Column(name = "tipo_cuenta", length = 1)
+	@Column(name = "codigo", length = 32)
 	@Enumerated(EnumType.STRING)
-	private TipoCuentaEnum tipoCuenta;
+	private CodigoParametroEnum codigo;
 	
-	@Column(name = "saldo", columnDefinition = "NUMERIC(15,2)")
-	private Double saldo;
+	@Column(name = "descripcion")
+	private String descripcion;
+	
+	@Column(name = "prefijo", length = 4)
+	private String prefijo;
+	
+	@Column(name = "valor")
+	private Integer valor;
+	
+	@Column(name = "sufijo", length = 4)
+	private String sufijo;
 	
 	@Column(name = "estatus")
 	private Boolean estatus;
@@ -44,10 +48,6 @@ public class CuentaEntity implements Serializable {
 	@Column(name = "fecha_actualizacion", columnDefinition = "TIMESTAMP")
 	private LocalDateTime fechaActualizacion;
 	
-	@ManyToOne
-	@JoinColumn(name = "id_cliente")
-	private ClienteEntity cliente;
-	
 	public Long getId() {
 		return id;
 	}
@@ -56,28 +56,44 @@ public class CuentaEntity implements Serializable {
 		this.id = id;
 	}
 
-	public String getNumeroCuenta() {
-		return numeroCuenta;
+	public CodigoParametroEnum getCodigo() {
+		return codigo;
 	}
 
-	public void setNumeroCuenta(String numeroCuenta) {
-		this.numeroCuenta = numeroCuenta;
+	public void setCodigo(CodigoParametroEnum codigo) {
+		this.codigo = codigo;
 	}
 
-	public TipoCuentaEnum getTipoCuenta() {
-		return tipoCuenta;
+	public String getDescripcion() {
+		return descripcion;
 	}
 
-	public void setTipoCuenta(TipoCuentaEnum tipoCuenta) {
-		this.tipoCuenta = tipoCuenta;
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
-	public Double getSaldo() {
-		return saldo;
+	public String getPrefijo() {
+		return prefijo;
 	}
 
-	public void setSaldo(Double saldo) {
-		this.saldo = saldo;
+	public void setPrefijo(String prefijo) {
+		this.prefijo = prefijo;
+	}
+
+	public Integer getValor() {
+		return valor;
+	}
+
+	public void setValor(Integer valor) {
+		this.valor = valor;
+	}
+
+	public String getSufijo() {
+		return sufijo;
+	}
+
+	public void setSufijo(String sufijo) {
+		this.sufijo = sufijo;
 	}
 
 	public Boolean getEstatus() {
@@ -104,14 +120,6 @@ public class CuentaEntity implements Serializable {
 		this.fechaActualizacion = fechaActualizacion;
 	}
 
-	public ClienteEntity getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(ClienteEntity cliente) {
-		this.cliente = cliente;
-	}
-
-	private static final long serialVersionUID = 3008210324075841907L;
-
+	private static final long serialVersionUID = 1101940622531672412L;
+	
 }

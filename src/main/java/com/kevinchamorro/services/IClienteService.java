@@ -7,10 +7,11 @@ import com.kevinchamorro.models.wrappers.ClienteWrap;
 
 public interface IClienteService {
 	
-	List<ClienteWrap> getAll();
-	ClienteWrap getById(Long id);
-	ClienteEntity create(ClienteWrap nuevoCliente);
-	ClienteEntity update(ClienteWrap cliente);
-	void delete(Long id);
+	List<ClienteEntity> get();
+	ClienteEntity getById(Long id);
+	ClienteEntity post(ClienteWrap clienteWrap) throws Exception;
+	ClienteEntity put(Long id, ClienteWrap clienteWrap) throws Exception;
+	ClienteEntity patch(Long id, ClienteWrap clienteWrap) throws Exception;
+	void delete(Long id) throws Exception;
 
 }
