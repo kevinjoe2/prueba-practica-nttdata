@@ -52,7 +52,7 @@ public class ClienteController {
 	}
 	
 	@DeleteMapping("{id}")
-	public ResponseEntity<String> delete(@PathVariable Long id) throws Exception {
+	public ResponseEntity<String> delete(@PathVariable Long id) {
 		clienteService.delete(id);
 		return new ResponseEntity<>("Eliminado correctamnete",HttpStatus.GONE);
 	}

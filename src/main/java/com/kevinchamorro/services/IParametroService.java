@@ -8,8 +8,8 @@ import com.kevinchamorro.models.wrappers.ParametroWrap;
 public interface IParametroService {
 	List<ParametroEntity> get();
 	ParametroEntity getById(Long id);
-	ParametroEntity post(ParametroWrap parametroWrap) throws Exception;
-	ParametroEntity put(Long id, ParametroWrap parametroWrap) throws Exception;
-	ParametroEntity patch(Long id, ParametroWrap parametroWrap) throws Exception;
-	void delete(Long id) throws Exception;
+	ParametroEntity post(ParametroWrap parametroWrap);
+	ParametroEntity put(Long id, ParametroWrap parametroWrap);
+	ParametroEntity patch(Long id, ParametroWrap parametroWrap);
+	void delete(Long id);
 }

@@ -9,9 +9,9 @@ public interface IMovimientoService {
 	
 	List<MovimientoEntity> get();
 	MovimientoEntity getById(Long id);
-	MovimientoEntity post(MovimientoWrap MovimientoWrap) throws Exception;
-	MovimientoEntity put(Long id, MovimientoWrap MovimientoWrap) throws Exception;
-	MovimientoEntity patch(Long id, MovimientoWrap MovimientoWrap) throws Exception;
-	void delete(Long id) throws Exception;
+	MovimientoEntity post(MovimientoWrap MovimientoWrap);
+	MovimientoEntity put(Long id, MovimientoWrap MovimientoWrap);
+	MovimientoEntity patch(Long id, MovimientoWrap MovimientoWrap);
+	void delete(Long id);
 
 }

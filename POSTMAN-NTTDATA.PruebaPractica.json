@@ -1,0 +1,789 @@
+{
+	"info": {
+		"_postman_id": "0cd6e0f5-3505-4285-8efa-e32c0c50cdfa",
+		"name": "NTTDATA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Parametros - Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - GetById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Post 1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\":\"CUPO_LIMITE\",\r\n    \"descripcion\":\"Cupo que tiene un cliente para retirar dinero\",\r\n    \"estatus\":true,\r\n    \"valor\":1000,\r\n    \"prefijo\":\"\",\r\n    \"sufijo\":\"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Post 2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\":\"CODIGO_CLIENTE\",\r\n    \"descripcion\":\"Se genera el codigo del cliente a partir de este parametro\",\r\n    \"estatus\":true,\r\n    \"valor\":5000,\r\n    \"prefijo\":\"CLI\",\r\n    \"sufijo\":\"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Post 3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\":\"NUMERO_CUENTA\",\r\n    \"descripcion\":\"Se genera el numero de cuenta a partir de este parametro\",\r\n    \"estatus\":true,\r\n    \"valor\":5000,\r\n    \"prefijo\":\"CUE\",\r\n    \"sufijo\":\"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigo\":\"NUMERO_CUENTA\",\r\n    \"descripcion\":\"Se genera el numero de cuenta a partir de este parametro\",\r\n    \"estatus\":true,\r\n    \"valor\":1000,\r\n    \"prefijo\":\"\",\r\n    \"sufijo\":\"\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}/4",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"estatus\":false\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}/4",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Parametros - Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{parametros}}/4",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{parametros}}",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - Get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - GetById",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}/2",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"identificacion\":\"0401859376\",\r\n    \"nombres\":\"Kevin Joel Chamorro Ortega\",\r\n    \"genero\":\"M\",\r\n    \"fechaNacimiento\":\"1996-01-21\",\r\n    \"telefono\":\"0996427491\",\r\n    \"direccion\":\"Alejandro de Valdez y Av. la gasca\",\r\n    \"clave\":\"password\",\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - Put",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"identificacion\":\"0401885543\",\r\n    \"nombres\":\"Norma Ayala\",\r\n    \"genero\":\"M\",\r\n    \"fechaNacimiento\":\"1996-07-22\",\r\n    \"telefono\":\"0998989898\",\r\n    \"direccion\":\"No sabe\",\r\n    \"clave\":\"222\",\r\n    \"estatus\":false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}/2",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"direccion\":\"Direccion 3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}/2",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Clientes - Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{clientes}}/3",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{clientes}}",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - GetById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigoCliente\":\"CLI5000\",\r\n    \"tipoCuenta\":\"A\",\r\n    \"saldoInicial\":5000,\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - Put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"codigoCliente\":\"CLI5001\",\r\n    \"numeroCuenta\":\"1000\",\r\n    \"tipoCuenta\":\"C\",\r\n    \"saldoInicial\":1000,\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}/10",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"estatus\":false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cuentas - Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{cuentas}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{cuentas}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - GetById",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}/2",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - Post",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroCuenta\":\"CUE5008\",\r\n    \"tipoMovimiento\":\"D\",\r\n    \"valor\":50,\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - Put",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroCuenta\":\"CUE5008\",\r\n    \"tipoMovimiento\":\"R\",\r\n    \"valor\":50,\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}/31",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}",
+						"31"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - Patch",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroCuenta\":\"AHO001\",\r\n    \"tipoMovimiento\":\"R\",\r\n    \"valor\":0,\r\n    \"estatus\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Movimientos - Delete",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{movimientos}}/1",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{movimientos}}",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reportes - Get",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{servidor}}:{{puerto}}/api/{{reportes}}/CLI5000/2022-03-01/2022-03-20",
+					"protocol": "http",
+					"host": [
+						"{{servidor}}"
+					],
+					"port": "{{puerto}}",
+					"path": [
+						"api",
+						"{{reportes}}",
+						"CLI5000",
+						"2022-03-01",
+						"2022-03-20"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "servidor",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "puerto",
+			"value": "9001",
+			"type": "string"
+		},
+		{
+			"key": "clientes",
+			"value": "clientes"
+		},
+		{
+			"key": "cuentas",
+			"value": "cuentas",
+			"type": "string"
+		},
+		{
+			"key": "movimientos",
+			"value": "movimientos",
+			"type": "string"
+		},
+		{
+			"key": "parametros",
+			"value": "parametros",
+			"type": "string"
+		},
+		{
+			"key": "reportes",
+			"value": "reportes",
+			"type": "string"
+		}
+	]
+}

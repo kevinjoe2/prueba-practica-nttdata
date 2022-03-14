@@ -10,13 +10,13 @@ public interface ICuentaService {
 	
 	List<CuentaEntity> get();
 	CuentaEntity getById(Long id);
-	CuentaEntity post(CuentaWrap cuentaWrap) throws Exception;
-	CuentaEntity put(Long id, CuentaWrap cuentaWrap) throws Exception;
-	CuentaEntity patch(Long id, CuentaWrap cuentaWrap) throws Exception;
-	void delete(Long id) throws Exception;
+	CuentaEntity post(CuentaWrap cuentaWrap);
+	CuentaEntity put(Long id, CuentaWrap cuentaWrap);
+	CuentaEntity patch(Long id, CuentaWrap cuentaWrap);
+	void delete(Long id);
 	
 	// REPORTES
 	
-	List<ReporteEstadoCuentaWrap> generarReporteEstadoCuenta(String codigoCliente, String fechaIncio, String fechaFin) throws Exception;
+	List<ReporteEstadoCuentaWrap> generarReporteEstadoCuenta(String codigoCliente, String fechaIncio, String fechaFin);
 
 }

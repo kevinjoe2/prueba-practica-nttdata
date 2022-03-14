@@ -1,6 +1,6 @@
 package com.kevinchamorro.repositories.specs;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,25 +12,25 @@ import com.kevinchamorro.models.entities.MovimientoEntity;
 
 public class MovimientoSpecs {
 	
-	public static Specification<MovimientoEntity> findByidCuenta(Long id_cuenta) {
+	public static Specification<MovimientoEntity> findByidCuenta(Long idCuenta) {
 		return (root, query, builder) -> {
-			return builder.equal(root.get("id_cuenta"), id_cuenta);
+			return builder.equal(root.get("cuenta"), idCuenta);
 		};
 	}
 	
-	public static Specification<MovimientoEntity> findByidCuentaAndRangoFechas(Long id_cuenta, LocalDate fechaInicio, LocalDate fechaFin) {
+	public static Specification<MovimientoEntity> findByidCuentaAndRangoFechas(Long idCuenta, LocalDateTime fechaInicio, LocalDateTime fechaFin) {
 		return (root, query, builder) -> {
 			
 			List<Predicate> patientLevelPredicates = new ArrayList<Predicate>();
 			
-			if ( id_cuenta != null )
-				patientLevelPredicates.add(builder.equal(root.get("id_cuenta"), id_cuenta));
+			if ( idCuenta != null )
+				patientLevelPredicates.add(builder.equal(root.get("cuenta"), idCuenta));
 			
 			if ( fechaInicio != null )
-				patientLevelPredicates.add(builder.greaterThan(root.get("fecha_creacion"), fechaInicio));
+				patientLevelPredicates.add(builder.greaterThan(root.get("fechaCreacion"), fechaInicio));
 			
 			if ( fechaFin != null )
-				patientLevelPredicates.add(builder.lessThan(root.get("fecha_creacion"), fechaFin));
+				patientLevelPredicates.add(builder.lessThan(root.get("fechaCreacion"), fechaFin));
 			
 			return builder.and(patientLevelPredicates.toArray(new Predicate[] {}));
 		};

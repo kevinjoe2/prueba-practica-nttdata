@@ -8,7 +8,7 @@ public class ClienteSpecs {
 	
 	public static Specification<ClienteEntity> findByCodigoCliente(String codigoCliente) {
 		return (root, query, builder) -> {
-			return builder.equal(root.get("codigo_cliente"), codigoCliente);
+			return builder.equal(root.get("codigoCliente"), codigoCliente);
 		};
 	}
 

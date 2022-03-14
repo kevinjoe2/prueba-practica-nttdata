@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import com.kevinchamorro.exceptions.KchException;
 import com.kevinchamorro.models.entities.CuentaEntity;
 import com.kevinchamorro.models.entities.MovimientoEntity;
 import com.kevinchamorro.models.entities.ParametroEntity;
@@ -36,177 +38,262 @@ public class MovimientoServiceImp implements IMovimientoService {
 
 	@Override
 	public List<MovimientoEntity> get() {
-		return (List<MovimientoEntity>) movimientoRepo.findAll();
+		try {
+			return (List<MovimientoEntity>) movimientoRepo.findAll();
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 	}
 
 	@Override
 	public MovimientoEntity getById(Long id) {
-		return movimientoRepo.findById(id).orElse(null);
-	}
-
-	@Override
-	public MovimientoEntity post(MovimientoWrap movimientoWrap) throws Exception {
-		
-		CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta)).orElse(null);
-		
-		if ( cuenta == null )
-			throw new Exception("Cuenta no existe");
-		
-		if ( cuenta.getSaldo() == 0 )
-			throw new Exception("Saldo no disponible");
-		
-		Double saldoFinal = saldoFinal(movimientoWrap.tipoMovimiento, movimientoWrap.valor, cuenta.getSaldo());
-		
-		if ( saldoFinal < 0 )
-			throw new Exception("Saldo no disponible");
-		
-		if ( UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento) == TipoMovimientoEnum.R )
-			validarCupoDiario(cuenta.getId(), movimientoWrap.valor);
-		
-		MovimientoEntity movimiento = new MovimientoEntity();
-		movimiento.setCuenta(cuenta);
-		movimiento.setEstatus(movimientoWrap.estatus);
-		movimiento.setFechaActualizacion(LocalDateTime.now());
-		movimiento.setFechaCreacion(LocalDateTime.now());
-		movimiento.setSaldoInicial(cuenta.getSaldo());
-		movimiento.setSaldoDisponible(saldoFinal);
-		movimiento.setTipoMovimiento(UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento));
-		movimiento.setValor(movimientoWrap.valor);
-		cuenta.setSaldo(saldoFinal);
-		
-		movimientoRepo.save(movimiento);
-		cuentaRepo.save(cuenta);
-		
-		return movimiento;
-	}
-
-	@Override
-	public MovimientoEntity put(Long id, MovimientoWrap movimientoWrap) throws Exception {
-		
-		CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta)).orElse(null);
-		
-		if ( cuenta == null )
-			throw new Exception("Cuenta no existe");
-		
-		if ( cuenta.getSaldo() == 0 )
-			throw new Exception("Saldo no disponible");
-		
-		Double saldoFinal = saldoFinal(movimientoWrap.tipoMovimiento, movimientoWrap.valor, cuenta.getSaldo());
-		
-		if ( saldoFinal < 0 )
-			throw new Exception("Saldo no disponible");
-		
-		if ( UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento) == TipoMovimientoEnum.R )
-			validarCupoDiario(cuenta.getId(), movimientoWrap.valor);
-		
-		MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
-		
-		if (movimiento == null) {
-			movimiento = new MovimientoEntity();
-			movimiento.setCuenta(cuenta);
-			movimiento.setFechaCreacion(LocalDateTime.now());
+		try {
+			return movimientoRepo.findById(id).orElse(null);
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
 		}
-		
-		movimiento.setEstatus(movimientoWrap.estatus);
-		movimiento.setFechaActualizacion(LocalDateTime.now());
-		movimiento.setSaldoInicial(cuenta.getSaldo());
-		movimiento.setSaldoDisponible(saldoFinal);
-		movimiento.setTipoMovimiento(UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento));
-		movimiento.setValor(movimientoWrap.valor);
-		cuenta.setSaldo(saldoFinal);
-		
-		movimientoRepo.save(movimiento);
-		cuentaRepo.save(cuenta);
-		
-		return movimiento;
-		
 	}
 
 	@Override
-	public MovimientoEntity patch(Long id, MovimientoWrap movimientoWrap) throws Exception {
+	public MovimientoEntity post(MovimientoWrap movimientoWrap) {
 		
-		MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
-		
-		if ( movimiento == null )
-			throw new Exception("Movimiento no existe");
-		
-		if ( movimientoWrap.valor != null && movimientoWrap.tipoMovimiento != null &&  movimientoWrap.numeroCuenta != null ) {
+		try {
 			
-			CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta)).orElse(null);
+			if ( movimientoWrap.valor < 0 )
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "No se acepta valores negativos");
 			
-			if ( cuenta == null )
-				throw new Exception("Cuenta no existe");
+			TipoMovimientoEnum tipoMovimientoEnum = UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento);
 			
-			if ( cuenta.getSaldo() == 0 )
-				throw new Exception("Saldo no disponible");
-			
-			Double saldoFinal = saldoFinal(movimientoWrap.tipoMovimiento, movimientoWrap.valor, cuenta.getSaldo());
-			
-			if ( saldoFinal < 0 )
-				throw new Exception("Saldo no disponible");
-			
-			if ( UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento) == TipoMovimientoEnum.R )
+			CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta))
+					.orElse(null);
+
+			if (cuenta == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cuenta no existe");
+
+			if (cuenta.getSaldo() == 0 && tipoMovimientoEnum == TipoMovimientoEnum.R)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+
+			Double saldoFinal = saldoFinal(tipoMovimientoEnum, movimientoWrap.valor, cuenta.getSaldo());
+
+			if (saldoFinal < 0)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+
+			if (tipoMovimientoEnum == TipoMovimientoEnum.R)
 				validarCupoDiario(cuenta.getId(), movimientoWrap.valor);
-			
+
+			MovimientoEntity movimiento = new MovimientoEntity();
+			movimiento.setCuenta(cuenta);
+			movimiento.setEstatus(movimientoWrap.estatus);
+			movimiento.setFechaCreacion(LocalDateTime.now());
+			movimiento.setFechaActualizacion(LocalDateTime.now());
+			movimiento.setFechaTrasaccion(LocalDateTime.now());
 			movimiento.setSaldoInicial(cuenta.getSaldo());
 			movimiento.setSaldoDisponible(saldoFinal);
-			movimiento.setTipoMovimiento(UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento));
-			movimiento.setValor(movimientoWrap.valor);
+			movimiento.setTipoMovimiento(tipoMovimientoEnum);
+			movimiento.setValor((tipoMovimientoEnum == TipoMovimientoEnum.R ? movimientoWrap.valor * -1 : movimientoWrap.valor));
 			cuenta.setSaldo(saldoFinal);
-			
+
+			movimientoRepo.save(movimiento);
 			cuentaRepo.save(cuenta);
+
+			return movimiento;
+			
+		} catch (Exception e) {
+			
+			throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, e.getMessage());
+			
 		}
-		
-		if ( movimientoWrap.estatus != null )
-			movimiento.setEstatus(movimientoWrap.estatus);
-		
-		movimiento.setFechaActualizacion(LocalDateTime.now());
-		
-		movimientoRepo.save(movimiento);
-		
-		return movimiento;
 	}
 
 	@Override
-	public void delete(Long id) throws Exception {
+	public MovimientoEntity put(Long id, MovimientoWrap movimientoWrap) {
 		
-		MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
-		
-		if ( movimiento == null )
-			throw new Exception("El movimiento no existe");
-		
-		
-	}
-	
-	private Double saldoFinal(String tipoMovimiento, Double valor, Double saldo) throws Exception {
-		
-		if (tipoMovimiento == TipoMovimientoEnum.D.name())
-			return saldo + valor;
-		
-		if (tipoMovimiento == TipoMovimientoEnum.R.name())
-			return saldo - valor;
+		try {
+			
+			if ( movimientoWrap.valor < 0 )
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "No se acepta valores negativos");
+			
+			TipoMovimientoEnum tipoMovimientoEnum = UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento);
+			
+			CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta))
+					.orElse(null);
+
+			if (cuenta == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cuenta no existe");
+
+			if (cuenta.getSaldo() == 0 && tipoMovimientoEnum == TipoMovimientoEnum.R)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+
+			if (tipoMovimientoEnum == TipoMovimientoEnum.R)
+				validarCupoDiario(cuenta.getId(), movimientoWrap.valor);
+
+			MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
+			
+			Double saldoFinal = (double) 0;
+			
+			if (movimiento == null) {
 				
-		throw new Exception("El tipo de movimiento no existe");
+				movimiento = new MovimientoEntity();
+				movimiento.setCuenta(cuenta);
+				movimiento.setFechaCreacion(LocalDateTime.now());
+				
+				saldoFinal = saldoFinal(tipoMovimientoEnum, movimientoWrap.valor, cuenta.getSaldo());
+				
+			} else {
+				
+				saldoFinal = saldoFinal(tipoMovimientoEnum, movimientoWrap.valor, cuenta.getSaldo() - movimiento.getValor());
+				
+			}
+
+			movimiento.setEstatus(movimientoWrap.estatus);
+			movimiento.setFechaActualizacion(LocalDateTime.now());
+			movimiento.setFechaTrasaccion(LocalDateTime.now());
+			movimiento.setValor((tipoMovimientoEnum == TipoMovimientoEnum.R ? movimientoWrap.valor * -1 : movimientoWrap.valor));
+			movimiento.setSaldoInicial(cuenta.getSaldo());
+			movimiento.setTipoMovimiento(tipoMovimientoEnum);
+			
+			if (saldoFinal < 0)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+			
+			movimiento.setSaldoDisponible(saldoFinal);
+			cuenta.setSaldo(saldoFinal);
+
+			movimientoRepo.save(movimiento);
+			cuentaRepo.save(cuenta);
+
+			return movimiento;
+		} catch (Exception e) {
+			
+			throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, e.getMessage());
+			
+		}
+		
+	}
+
+	@Override
+	public MovimientoEntity patch(Long id, MovimientoWrap movimientoWrap) {
+		
+		try {
+			
+			if ( movimientoWrap.valor < 0 )
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "No se acepta valores negativos");
+			
+			TipoMovimientoEnum tipoMovimientoEnum = UtilFunc.getEnumFromString(TipoMovimientoEnum.class, movimientoWrap.tipoMovimiento);
+			
+			MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
+
+			if (movimiento == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Movimiento no existe");
+
+			if (movimientoWrap.valor != null && movimientoWrap.tipoMovimiento != null
+					&& movimientoWrap.numeroCuenta != null) {
+
+				CuentaEntity cuenta = cuentaRepo.findOne(CuentaSpecs.findByNumeroCuenta(movimientoWrap.numeroCuenta))
+						.orElse(null);
+
+				if (cuenta == null)
+					throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cuenta no existe");
+
+				if (cuenta.getSaldo() == 0 && tipoMovimientoEnum == TipoMovimientoEnum.R)
+					throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+
+				if (tipoMovimientoEnum == TipoMovimientoEnum.R)
+					validarCupoDiario(cuenta.getId(), movimientoWrap.valor);
+
+				movimiento.setTipoMovimiento(tipoMovimientoEnum);
+				
+				Double saldoFinal = saldoFinal(tipoMovimientoEnum, movimientoWrap.valor, cuenta.getSaldo() - movimiento.getValor());
+				
+				movimiento.setValor((tipoMovimientoEnum == TipoMovimientoEnum.R ? movimientoWrap.valor * -1 : movimientoWrap.valor));
+				
+				if (saldoFinal < 0)
+					throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Saldo no disponible");
+				
+				movimiento.setSaldoDisponible(saldoFinal);
+				cuenta.setSaldo(saldoFinal);
+
+				cuentaRepo.save(cuenta);
+			}
+
+			if (movimientoWrap.estatus != null)
+				movimiento.setEstatus(movimientoWrap.estatus);
+
+			movimiento.setFechaActualizacion(LocalDateTime.now());
+			movimiento.setFechaTrasaccion(LocalDateTime.now());
+
+			movimientoRepo.save(movimiento);
+
+			return movimiento;
+		} catch (Exception e) {
+			
+			throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, e.getMessage());
+			
+		}
+	}
+
+	@Override
+	public void delete(Long id) {
+		
+		try {
+			MovimientoEntity movimiento = movimientoRepo.findById(id).orElse(null);
+
+			if (movimiento == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "El movimiento no existe");
+
+			CuentaEntity cuenta = cuentaRepo.findById(movimiento.getCuenta().getId()).orElse(null);
+
+			if (cuenta != null) {
+				cuenta.setSaldo(cuenta.getSaldo() + movimiento.getValor());
+				cuentaRepo.save(cuenta);
+			}
+
+			movimientoRepo.delete(movimiento);
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
+		
+		
 	}
 	
-	private void validarCupoDiario(Long id_cuenta, Double valorRetirar) throws Exception {
+	private Double saldoFinal(TipoMovimientoEnum tipoMovimientoEnum, Double valor, Double saldo) {
 		
-		ParametroEntity parametro = parametroRepo.findOne(ParametroSpecs.findByCodigo(CodigoParametroEnum.CUPO_LIMITE.name())).orElse(null);
+		try {
+			if (tipoMovimientoEnum == TipoMovimientoEnum.D)
+				return saldo + valor;
+
+			if (tipoMovimientoEnum == TipoMovimientoEnum.R)
+				return saldo - valor;
+
+			throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "No existe el tipo de movimiento");
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
+	}
+	
+	private void validarCupoDiario(Long idCuenta, Double valorRetirar) {
 		
-		if ( parametro != null  ) {
-			
-			List<MovimientoEntity> movimientos = movimientoRepo.findAll(MovimientoSpecs.findByidCuenta(id_cuenta));
-			
-			List<Double> movimientosHoy = movimientos
-					.stream()
-					.filter(f -> f.getFechaCreacion().toLocalDate() == LocalDate.now() && f.getTipoMovimiento() == TipoMovimientoEnum.R)
-					.map(m -> m.getValor())
-					.collect(Collectors.toList());
-			
-			Double sumaValoresHoy = movimientosHoy.stream().reduce((double) 0, (a, b) -> a + b);
-			
-			if ( (sumaValoresHoy + valorRetirar) > parametro.getValor() )
-				throw new Exception("Cupo diario Excedido");
+		try {
+			ParametroEntity parametro = parametroRepo
+					.findOne(ParametroSpecs.findByCodigo(CodigoParametroEnum.CUPO_LIMITE)).orElse(null);
+
+			if (parametro != null) {
+
+				List<MovimientoEntity> movimientos = movimientoRepo.findAll(MovimientoSpecs.findByidCuenta(idCuenta));
+				
+				List<Double> movimientosHoy = movimientos.stream()
+						.filter(f -> f.getFechaCreacion().toLocalDate().equals(LocalDate.now())
+								&& f.getTipoMovimiento() == TipoMovimientoEnum.R)
+						.map(m -> m.getValor()).collect(Collectors.toList());
+
+				Double sumaValoresHoy = movimientosHoy.stream().reduce((double) 0, (a, b) -> a + b);
+				
+				sumaValoresHoy = (sumaValoresHoy * -1) + valorRetirar;
+
+				if (sumaValoresHoy > parametro.getValor())
+					throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cupo diario Excedido");
+			} 
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
 		}
 	}
 	

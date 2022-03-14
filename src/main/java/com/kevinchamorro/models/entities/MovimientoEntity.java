@@ -93,7 +93,7 @@ public class MovimientoEntity implements Serializable {
 	public void setSaldoInicial(Double saldoInicial) {
 		this.saldoInicial = saldoInicial;
 	}
-	
+
 	public Double getSaldoDisponible() {
 		return saldoDisponible;
 	}

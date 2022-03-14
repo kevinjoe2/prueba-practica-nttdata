@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.kevinchamorro.exceptions.KchException;
 import com.kevinchamorro.models.entities.ClienteEntity;
 import com.kevinchamorro.models.entities.ParametroEntity;
 import com.kevinchamorro.models.entities.PersonaEntity;
@@ -16,7 +18,6 @@ import com.kevinchamorro.repositories.ClienteRepo;
 import com.kevinchamorro.repositories.ParametroRepo;
 import com.kevinchamorro.repositories.PersonaRepo;
 import com.kevinchamorro.repositories.specs.ParametroSpecs;
-import com.kevinchamorro.repositories.specs.PersonaSpecs;
 import com.kevinchamorro.util.enums.CodigoParametroEnum;
 import com.kevinchamorro.util.enums.GeneroEnum;
 import com.kevinchamorro.util.func.UtilFunc;
@@ -36,172 +37,205 @@ public class ClienteServiceImp implements IClienteService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<ClienteEntity> get() {
-		
-		return (List<ClienteEntity>)clienteRepo.findAll();
+		try {
+			return (List<ClienteEntity>)clienteRepo.findAll();
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public ClienteEntity getById(Long id) {
-		
-		ClienteEntity cliente = clienteRepo.findById(id).orElse(null);
-		
-		return cliente;
+		try {
+			return clienteRepo.findById(id).orElse(null);
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 	}
 	
 	@Override
 	@Transactional()
-	public ClienteEntity post(ClienteWrap clienteWrap) throws Exception {
+	public ClienteEntity post(ClienteWrap clienteWrap) {
 		
-		PersonaEntity persona = new PersonaEntity();
-		persona.setIdentificacion(clienteWrap.identificacion);
-		persona.setNombre(clienteWrap.nombres);
-		persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
-		persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
-		persona.setDireccion(clienteWrap.direccion);
-		persona.setTelefono(clienteWrap.telefono);
-		persona.setEstatus(clienteWrap.estatus);
-		persona.setFechaCreacion(LocalDateTime.now());
-		persona.setFechaActualizacion(LocalDateTime.now());
-		
-		ClienteEntity cliente = new ClienteEntity();
-		cliente.setCodigoCliente(generarCodigoCliente());
-		cliente.setClave(clienteWrap.clave);
-		cliente.setEstatus(true);
-		cliente.setFechaCreacion(LocalDateTime.now());
-		cliente.setFechaActualizacion(LocalDateTime.now());
-		cliente.setPersona(persona);
-		
-		personaRepo.save(persona);
-		clienteRepo.save(cliente);
-		
-		return cliente;
-		
-	}
-
-	@Override
-	@Transactional()
-	public ClienteEntity put(Long id, ClienteWrap clienteWrap) throws Exception {
-		
-		PersonaEntity persona = personaRepo.findOne(PersonaSpecs.findByIdentificacion(clienteWrap.identificacion)).orElse(null);
-		
-		if ( persona == null  ) {
-			
-			persona = new PersonaEntity();
+		try {
+			PersonaEntity persona = new PersonaEntity();
 			persona.setIdentificacion(clienteWrap.identificacion);
-			persona.setFechaCreacion(LocalDateTime.now());
-			
-		}
-		
-		persona.setEstatus(clienteWrap.estatus);
-		persona.setDireccion(clienteWrap.direccion);
-		persona.setFechaActualizacion(LocalDateTime.now());
-		persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
-		persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
-		persona.setNombre(clienteWrap.nombres);
-		persona.setTelefono(clienteWrap.telefono);
-		
-		ClienteEntity cliente = clienteRepo.findById(persona.getId()).get();
-		
-		if ( cliente == null ) {
-			
-			cliente = new ClienteEntity();
-			cliente.setCodigoCliente(generarCodigoCliente());
-			cliente.setFechaCreacion(LocalDateTime.now());
-			cliente.setPersona(persona);
-			
-		}
-		
-		persona.setEstatus(clienteWrap.estatus);
-		cliente.setClave(clienteWrap.clave);
-		cliente.setFechaActualizacion(LocalDateTime.now());
-		
-		personaRepo.save(persona);
-		clienteRepo.save(cliente);
-		
-		return cliente;
-	}
-	
-	@Override
-	@Transactional()
-	public ClienteEntity patch(Long id, ClienteWrap clienteWrap) throws Exception {
-		
-		PersonaEntity persona = personaRepo.findOne(PersonaSpecs.findByIdentificacion(clienteWrap.identificacion)).orElse(null);
-		
-		if (persona == null)
-			throw new Exception("Cliente no existe");
-		
-		if (clienteWrap.direccion != null)
-			persona.setDireccion(clienteWrap.direccion);
-
-		if (clienteWrap.fechaNacimiento != null)
-			persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
-		
-		if (clienteWrap.genero != null)
-			persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
-		
-		if (clienteWrap.nombres != null)
 			persona.setNombre(clienteWrap.nombres);
-		
-		if (clienteWrap.telefono != null)
+			persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+			persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+			persona.setDireccion(clienteWrap.direccion);
 			persona.setTelefono(clienteWrap.telefono);
-		
-		if (clienteWrap.estatus != null)
 			persona.setEstatus(clienteWrap.estatus);
-		
-		persona.setFechaActualizacion(LocalDateTime.now());
-		
-		ClienteEntity cliente = clienteRepo.findById(persona.getId()).get();
-		
-		if (cliente == null)
-			throw new Exception("Cliente no existe");
-		
-		if (clienteWrap.clave != null)
+			persona.setFechaCreacion(LocalDateTime.now());
+			persona.setFechaActualizacion(LocalDateTime.now());
+
+			ClienteEntity cliente = new ClienteEntity();
+			cliente.setCodigoCliente(generarCodigoCliente());
 			cliente.setClave(clienteWrap.clave);
+			cliente.setEstatus(true);
+			cliente.setFechaCreacion(LocalDateTime.now());
+			cliente.setFechaActualizacion(LocalDateTime.now());
+			cliente.setPersona(persona);
+
+			personaRepo.save(persona);
+			clienteRepo.save(cliente);
+
+			return cliente;
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 		
-		if (clienteWrap.estatus != null)
-			cliente.setEstatus(clienteWrap.estatus);
-		
-		cliente.setFechaActualizacion(LocalDateTime.now());
-		
-		personaRepo.save(persona);
-		clienteRepo.save(cliente);
-		
-		return cliente;
 	}
 
 	@Override
 	@Transactional()
-	public void delete(Long id) throws Exception {
+	public ClienteEntity put(Long id, ClienteWrap clienteWrap) {
 		
-		ClienteEntity cliente = clienteRepo.findById(id).get();
+		try {
+			ClienteEntity cliente = clienteRepo.findById(id).orElse(null);
+			PersonaEntity persona = new PersonaEntity();
+
+			if (cliente == null) {
+
+				cliente = new ClienteEntity();
+				cliente.setCodigoCliente(generarCodigoCliente());
+				cliente.setFechaCreacion(LocalDateTime.now());
+
+				persona.setFechaCreacion(LocalDateTime.now());
+				cliente.setPersona(persona);
+
+			} else {
+
+				persona = personaRepo.findById(cliente.getPersona().getId()).orElse(null);
+
+				if (persona == null) {
+
+					persona = new PersonaEntity();
+					persona.setFechaCreacion(LocalDateTime.now());
+					cliente.setPersona(persona);
+
+				}
+
+			}
+
+			cliente.setEstatus(clienteWrap.estatus);
+			cliente.setClave(clienteWrap.clave);
+			cliente.setFechaActualizacion(LocalDateTime.now());
+
+			persona.setIdentificacion(clienteWrap.identificacion);
+			persona.setEstatus(clienteWrap.estatus);
+			persona.setDireccion(clienteWrap.direccion);
+			persona.setFechaActualizacion(LocalDateTime.now());
+			persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+			persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+			persona.setNombre(clienteWrap.nombres);
+			persona.setTelefono(clienteWrap.telefono);
+
+			personaRepo.save(persona);
+			clienteRepo.save(cliente);
+
+			return cliente;
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
+	}
+	
+	@Override
+	@Transactional()
+	public ClienteEntity patch(Long id, ClienteWrap clienteWrap) {
 		
-		if (cliente == null)
-			throw new Exception("No existe cliente"); 
+		try {
+			ClienteEntity cliente = clienteRepo.findById(id).get();
+
+			if (cliente == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cliente no existe");
+
+			if (clienteWrap.clave != null)
+				cliente.setClave(clienteWrap.clave);
+
+			if (clienteWrap.estatus != null)
+				cliente.setEstatus(clienteWrap.estatus);
+
+			cliente.setFechaActualizacion(LocalDateTime.now());
+
+			PersonaEntity persona = personaRepo.findById(cliente.getPersona().getId()).orElse(null);
+
+			if (persona == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "Cliente no existe");
+
+			if (clienteWrap.direccion != null)
+				persona.setDireccion(clienteWrap.direccion);
+
+			if (clienteWrap.fechaNacimiento != null)
+				persona.setFechaNacimiento(LocalDate.parse(clienteWrap.fechaNacimiento));
+
+			if (clienteWrap.genero != null)
+				persona.setGenero(UtilFunc.getEnumFromString(GeneroEnum.class, clienteWrap.genero));
+
+			if (clienteWrap.nombres != null)
+				persona.setNombre(clienteWrap.nombres);
+
+			if (clienteWrap.telefono != null)
+				persona.setTelefono(clienteWrap.telefono);
+
+			if (clienteWrap.estatus != null)
+				persona.setEstatus(clienteWrap.estatus);
+
+			persona.setFechaActualizacion(LocalDateTime.now());
+
+			clienteRepo.save(cliente);
+
+			personaRepo.save(persona);
+
+			return cliente;
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
+	}
+
+	@Override
+	@Transactional()
+	public void delete(Long id) {
 		
-		PersonaEntity persona = personaRepo.findById(cliente.getPersona().getId()).get();
-		
-		clienteRepo.delete(cliente);
-		personaRepo.delete(persona);
+		try {
+			ClienteEntity cliente = clienteRepo.findById(id).orElse(null);
+
+			if (cliente == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST, "No existe cliente");
+
+			PersonaEntity persona = personaRepo.findById(cliente.getPersona().getId()).get();
+
+			clienteRepo.delete(cliente);
+			personaRepo.delete(persona);
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 		
 	}
 	
-	private String generarCodigoCliente() throws Exception {
+	private String generarCodigoCliente() {
 		
-		ParametroEntity parametro = parametroRepo.findOne(ParametroSpecs.findByCodigo(CodigoParametroEnum.CODIGO_CLIENTE.name())).orElse(null);
-		
-		if ( parametro == null )
-			throw new Exception("No se puede generar codigo cliente ya que no existe el parametro");
-		
-		Integer valor = parametro.getValor();
-		
-		String codigoCliente = parametro.getPrefijo() + valor + parametro.getSufijo();
-		
-		parametro.setValor(valor + 1);
-		
-		parametroRepo.save(parametro);
-		
-		return codigoCliente;
+		try {
+			ParametroEntity parametro = parametroRepo
+					.findOne(ParametroSpecs.findByCodigo(CodigoParametroEnum.CODIGO_CLIENTE)).orElse(null);
+
+			if (parametro == null)
+				throw new KchException("Kch-400", HttpStatus.BAD_REQUEST,
+						"No se puede generar codigo cliente ya que no existe el parametro");
+
+			Integer valor = parametro.getValor();
+
+			String codigoCliente = parametro.getPrefijo() + valor + parametro.getSufijo();
+
+			parametro.setValor(valor + 1);
+
+			parametroRepo.save(parametro);
+
+			return codigoCliente;
+		} catch (Exception e) {
+			throw new KchException("Kch-400",HttpStatus.BAD_REQUEST,e.getLocalizedMessage());
+		}
 		
 	}
 
